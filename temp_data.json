@@ -1,0 +1,30 @@
+{
+    "CS1301": [
+        {
+            "commentId": "comment1",
+            "userId": "user123",
+            "timestamp": "2024-03-05T08:00:00Z",
+            "commentText": "This course provided a solid introduction to programming concepts."
+        },
+        {
+            "commentId": "comment2",
+            "userId": "user456",
+            "timestamp": "2024-03-06T09:30:00Z",
+            "commentText": "Highly recommend for beginners!"
+        }
+    ],
+    "CS1302": [
+        {
+            "commentId": "comment1",
+            "userId": "user789",
+            "timestamp": "2024-03-07T10:15:00Z",
+            "commentText": "Challenging course, but very rewarding."
+        },
+        {
+            "commentId": "comment2",
+            "userId": "user012",
+            "timestamp": "2024-03-08T11:20:00Z",
+            "commentText": "Great follow-up to CS1301."
+        }
+    ]
+}

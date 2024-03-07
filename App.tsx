@@ -10,17 +10,10 @@ import LogInView from './LogIn';
 import SelectAOSView from './AOS'
 import ClassInfoView from './ClassInfo';
 import SignUpView from './SignUp';
+import CommentsView from './Comments';
+import PreReqView from './PreReq';
 
 const App = () => {
-
-    /* 5th screen - View comments */
-    const CommentsView = ({navigation}) => {
-
-        return (
-            <View style={styles.container}>
-            </View>
-        );
-    }
 
     /* Container for each screen -> to add new screen, add a new <Stack.Screen>, where component = the page and name = name of page  */
     /* For a button to go to a different screen, you can use onPress = {() => {navigation.navigate(name_of_page)}} */
@@ -31,6 +24,7 @@ const App = () => {
             <Stack.Navigator>
                 <Stack.Screen name = "Log In" component = {LogInView} />
                 <Stack.Screen name = "Sign Up" component = {SignUpView} />
+                <Stack.Screen name = "PreReq" component = {PreReqView} />
                 <Stack.Screen name = "Area Of Study" component = {SelectAOSView} />
                 <Stack.Screen name = "Class Information" component = {ClassInfoView} />
                 <Stack.Screen name = "Comments" component = {CommentsView} />

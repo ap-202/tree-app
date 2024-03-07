@@ -15,9 +15,7 @@ import SignUpView from './SignUp';
     const [password, updatePassword] = useState('')
 
     const submitLogInData = () => {
-        console.log(email)
-        console.log(password)
-        navigation.navigate("Class Information")
+        navigation.navigate("PreReq", {classID: 'CS1301'})
     }
 
     return(

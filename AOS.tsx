@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NativeBaseProvider, Box } from "native-base";
 import { Center } from 'native-base';
-import { VStack, Input, Button, Heading, Text, FormControl, Radio} from 'native-base'; 
+import { VStack, Input, Button, Heading, Text, FormControl, Avatar, Radio} from 'native-base'; 
  
 /* 3rd screen - Select (Area of Study) Major + Threads */
 const SelectAOSView = ({navigation}) => {
