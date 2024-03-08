@@ -16,6 +16,7 @@ import SignUpView from './SignUp';
 
     const submitLogInData = () => {
         navigation.navigate("PreReq", {classID: 'CS1301'})
+        //navigation.navigate("Scrape")
     }
 
     return(
@@ -39,6 +40,7 @@ import SignUpView from './SignUp';
                         <VStack space={5} alignItems="center">
                             <Text textAlign="center" fontSize={13}>Don't have an account? Click the button below to get started.</Text>
                             <Button onPress = {() => {navigation.navigate("Sign Up")}}>Sign Up</Button>
+                            <Button onPress = {() => {navigation.navigate("Scrape")}}>DEV BUTTON</Button>
                         </VStack>
                     </Center>
                 </Center>

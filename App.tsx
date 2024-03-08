@@ -12,6 +12,7 @@ import ClassInfoView from './ClassInfo';
 import SignUpView from './SignUp';
 import CommentsView from './Comments';
 import PreReqView from './PreReq';
+import ScrapeView from './Scraping';
 
 const App = () => {
 
@@ -28,6 +29,7 @@ const App = () => {
                 <Stack.Screen name = "Area Of Study" component = {SelectAOSView} />
                 <Stack.Screen name = "Class Information" component = {ClassInfoView} />
                 <Stack.Screen name = "Comments" component = {CommentsView} />
+                <Stack.Screen name = "Scrape" component = {ScrapeView} />
             </Stack.Navigator>
         </NavigationContainer>  
         );
