@@ -159,6 +159,8 @@ export default function Tree(props: {course: string, prerequisites: string}) {
   return (
     <ScrollView style={styles.outer}>
       <ScrollView horizontal style={styles.outer}>
+        <Text>nodes: {JSON.stringify(nodes)}</Text>
+        <Text>edges: {JSON.stringify(edges)}</Text>
         {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y}/>)}
         <Svg style={{
           position: 'absolute',

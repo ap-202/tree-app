@@ -71,9 +71,11 @@ export default function ScrapeView() {
         />
         <Text style={styles.prereq_header}>Prerequisites Info</Text>
         {prerequisites ? (
-            <>
-                <Tree course={courseName} prerequisites={prerequisites}/>
+            <>        
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
+                {prerequisites != "No prerequisites found or course does not exist." ? (
+                    <Tree course={courseName} prerequisites={prerequisites}/>
+                ) : null}
             </>
         ) : null}
         <Box pt= "5"><Button onPress = {onButtonPressed}>Push result.json To Firebase</Button></Box>
