@@ -143,10 +143,10 @@ export default function ScrapeView() {
     console.log("courses: ");
     for (let i = 0; i < userMetrics.length; i++) {
       let duration = userMetrics[i].endTime - userMetrics[i].startTime;
-      console.log("    course: " + userMetrics[i].course + ", duration: " + duration);
+      console.log("    course: " + userMetrics[i].course.toUpperCase() + ", duration: " + (duration / 1000).toFixed(1) + "s");
       totalDuration += duration;
     }
-    console.log("total duration: " + totalDuration);
+    console.log("total duration: " + (totalDuration / 1000).toFixed(1) + "s");
   }
 
   const [userMetrics, setUserMetrics] = useState<{course: string, startTime: number, endTime: number}[]>([]);
@@ -172,7 +172,7 @@ export default function ScrapeView() {
             placeholder="e.g. MATH 3012"
         />
         <Text style={styles.prereq_header}>Prerequisites Info</Text>
-        {prerequisites ? (
+        {prerequisites != null ? (
             <>        
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
                 {prerequisites != noPrerequisitesFoundText ? (

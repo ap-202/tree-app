@@ -138,14 +138,21 @@ const CalculateNodeAndEdgePositions = (
 }
 
 export default function Tree(props: {course: string, prerequisites: string, setCourse: any}) {
-  if (!!!props.prerequisites) return (<></>);
-
   let nodeWidth = 90;
   let nodeHeight = 50;
   let verticalGapSize = 100;
   let minimumHorizontalGapSize = 25;
   let nodeBorderWidth = 3;
   let edgeWidth = 2;
+
+  if (!!!props.prerequisites) return (
+    <ScrollView style={styles.outer}>
+      <ScrollView horizontal style={styles.outer}>
+        <Text>asdfasdfasdfasdfasdfasd</Text>
+        <Node text={"No prerequisites for " + props.course} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse}/>
+      </ScrollView>
+    </ScrollView>
+  );
 
   let nodesAndEdges = CalculateNodeAndEdgePositions(
     ParseRawPrerequisites(props.course, props.prerequisites),
