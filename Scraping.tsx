@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import courseData from './assets/result.json';
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput } from 'react-native';
-import { Box, HStack, ScrollView, VStack, FlatList, Input, Button, Heading, Text, FormControl, Radio, NativeBaseProvider} from 'native-base';
+import { Box, Button, Text, NativeBaseProvider} from 'native-base';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import Tree from './Tree';

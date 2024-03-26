@@ -64,11 +64,9 @@ const ParseRawPrerequisites = (course: string, prerequisites: string): {id: numb
       } else {
         if (andOr[openParenCount]) node.parent = andOr[openParenCount] ?? 0;
         else orphans[openParenCount] = node;
-        
-        if (openParenCount + 1 < nodes.length) {
-          nodes[openParenCount + 1].push(node);
-          id++;
-        }
+        while (nodes.length <= openParenCount + 1) nodes.push([]);
+        nodes[openParenCount + 1].push(node);
+        id++;
       }
     }
     i++;
