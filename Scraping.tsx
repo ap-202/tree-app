@@ -5,6 +5,7 @@ import { StyleSheet, View, TextInput } from 'react-native';
 import { Box, HStack, ScrollView, VStack, FlatList, Input, Button, Heading, Text, FormControl, Radio, NativeBaseProvider} from 'native-base';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import Tree from './Tree';
 
 export default function ScrapeView() {
   const [courseName, setCourseName] = useState('');
@@ -27,6 +28,8 @@ export default function ScrapeView() {
     fetchPrerequisites();
   }, [courseName]);
 
+  const noPrerequisitesFoundText = "No prerequisites found or course does not exist.";
+
   const fetchPrerequisites = () => {
     const course = courseData.find(c => c.identifier === courseName.toUpperCase());
     if (course && course.prerequisites) {
@@ -42,7 +45,7 @@ export default function ScrapeView() {
       }).join(' AND ');
       setPrerequisites(`${prereqs}`);
     } else {
-      setPrerequisites('No prerequisites found or course does not exist.');
+      setPrerequisites(noPrerequisitesFoundText);
     }
   };
 
@@ -54,9 +57,37 @@ export default function ScrapeView() {
     });
   };
 
-  const onButtonPressed = () => {
+  const onFirebaseButtonPressed = () => {
     pushAllData()        
   }
+
+  const onLogStatisticsButtonPressed = async () => {
+    setUserMetrics((metrics) => {
+      if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime) metrics[metrics.length - 1].endTime = Date.now();
+      return metrics;
+    })
+    console.log("total courses searched: " + userMetrics.length);
+    let totalDuration = 0;
+    console.log("courses: ");
+    for (let i = 0; i < userMetrics.length; i++) {
+      let duration = userMetrics[i].endTime - userMetrics[i].startTime;
+      console.log("    course: " + userMetrics[i].course + ", duration: " + duration);
+      totalDuration += duration;
+    }
+    console.log("total duration: " + totalDuration);
+  }
+
+  const [userMetrics, setUserMetrics] = useState<{course: string, startTime: number, endTime: number}[]>([]);
+
+  useEffect(() => {
+    if (prerequisites && prerequisites != noPrerequisitesFoundText) {
+      setUserMetrics((metrics) => {
+        if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime) metrics[metrics.length - 1].endTime = Date.now();
+        metrics.push({course: courseName, startTime: Date.now(), endTime: 0});
+        return metrics;
+      })
+    }
+  }, [prerequisites]);
 
   return (
     <NativeBaseProvider>
@@ -70,13 +101,22 @@ export default function ScrapeView() {
         />
         <Text style={styles.prereq_header}>Prerequisites Info</Text>
         {prerequisites ? (
-            <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
+            <>        
+                <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
+                {prerequisites != noPrerequisitesFoundText ? (
+                    <Tree course={courseName} prerequisites={prerequisites} setCourse={setCourseName}/>
+                ) : null}
+            </>
         ) : null}
-        <Box pt= "5"><Button onPress = {onButtonPressed}>Push result.json To Firebase</Button></Box>
+        <Text>search count: {userMetrics.length}</Text>
+
+        <Box pt= "5">
+          <Button onPress = {onFirebaseButtonPressed}>Push result.json To Firebase</Button>
+          <Button onPress = {onLogStatisticsButtonPressed}>Log statistics</Button>
+        </Box>
         <StatusBar style="auto" />
         </View>
     </NativeBaseProvider>
-
 );
 }
 
