@@ -37,7 +37,6 @@ const ParseRawPrerequisites = (course: string, prerequisites: string): {id: numb
     if (curr == '(') {
       openParenCount++;
       while (nodes.length < openParenCount + 2) {
-        console.log("1");
         orphans.push(null);
         nodes.push([]);
         andOr.push(0);

@@ -57,14 +57,35 @@ export default function ScrapeView() {
     });
   };
 
-  const onButtonPressed = () => {
+  const onFirebaseButtonPressed = () => {
     pushAllData()        
   }
 
-  const [searchCount, setSearchCount] = useState(0);
+  const onLogStatisticsButtonPressed = async () => {
+    setUserMetrics((metrics) => {
+      if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime) metrics[metrics.length - 1].endTime = Date.now();
+      return metrics;
+    })
+    console.log("total courses searched: " + userMetrics.length);
+    let totalDuration = 0;
+    console.log("courses: ");
+    for (let i = 0; i < userMetrics.length; i++) {
+      let duration = userMetrics[i].endTime - userMetrics[i].startTime;
+      console.log("    course: " + userMetrics[i].course + ", duration: " + duration);
+      totalDuration += duration;
+    }
+    console.log("total duration: " + totalDuration);
+  }
+
+  const [userMetrics, setUserMetrics] = useState<{course: string, startTime: number, endTime: number}[]>([]);
+
   useEffect(() => {
     if (prerequisites && prerequisites != noPrerequisitesFoundText) {
-      setSearchCount((count) => count + 1);
+      setUserMetrics((metrics) => {
+        if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime) metrics[metrics.length - 1].endTime = Date.now();
+        metrics.push({course: courseName, startTime: Date.now(), endTime: 0});
+        return metrics;
+      })
     }
   }, [prerequisites]);
 
@@ -83,15 +104,16 @@ export default function ScrapeView() {
             <>        
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
                 {prerequisites != noPrerequisitesFoundText ? (
-                    <>
-                        {setSearchCount}
-                        <Tree course={courseName} prerequisites={prerequisites}/>
-                    </>
+                    <Tree course={courseName} prerequisites={prerequisites}/>
                 ) : null}
             </>
         ) : null}
-        <Text>search count: {searchCount}</Text>
-        <Box pt= "5"><Button onPress = {onButtonPressed}>Push result.json To Firebase</Button></Box>
+        <Text>search count: {userMetrics.length}</Text>
+
+        <Box pt= "5">
+          <Button onPress = {onFirebaseButtonPressed}>Push result.json To Firebase</Button>
+          <Button onPress = {onLogStatisticsButtonPressed}>Log statistics</Button>
+        </Box>
         <StatusBar style="auto" />
         </View>
     </NativeBaseProvider>
