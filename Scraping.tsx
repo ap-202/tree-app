@@ -104,7 +104,7 @@ export default function ScrapeView() {
             <>        
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
                 {prerequisites != noPrerequisitesFoundText ? (
-                    <Tree course={courseName} prerequisites={prerequisites}/>
+                    <Tree course={courseName} prerequisites={prerequisites} setCourse={setCourseName}/>
                 ) : null}
             </>
         ) : null}

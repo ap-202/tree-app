@@ -139,7 +139,7 @@ const CalculateNodeAndEdgePositions = (
   return {nodes: newNodes, edges: edges};
 }
 
-export default function Tree(props: {course: string, prerequisites: string}) {
+export default function Tree(props: {course: string, prerequisites: string, setCourse: any}) {
   if (!!!props.prerequisites) return (<></>);
 
   let nodeWidth = 90;
@@ -160,7 +160,7 @@ export default function Tree(props: {course: string, prerequisites: string}) {
       <ScrollView horizontal style={styles.outer}>
         <Text>nodes: {JSON.stringify(nodes)}</Text>
         <Text>edges: {JSON.stringify(edges)}</Text>
-        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y}/>)}
+        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} setCourse={props.setCourse}/>)}
         <Svg style={{
           position: 'absolute',
           left: 0,
