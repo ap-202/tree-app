@@ -5,7 +5,7 @@ import { StyleSheet, View, TextInput } from 'react-native';
 import { Box, HStack, ScrollView, VStack, FlatList, Input, Button, Heading, Text, FormControl, Radio, NativeBaseProvider} from 'native-base';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { Tree } from './Tree';
+import Tree from './Tree';
 
 export default function ScrapeView() {
   const [courseName, setCourseName] = useState('');
@@ -72,8 +72,8 @@ export default function ScrapeView() {
         <Text style={styles.prereq_header}>Prerequisites Info</Text>
         {prerequisites ? (
             <>
+                <Tree course={courseName} prerequisites={prerequisites}/>
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
-                <Tree course={courseName} prerequisites={prerequisites} />
             </>
         ) : null}
         <Box pt= "5"><Button onPress = {onButtonPressed}>Push result.json To Firebase</Button></Box>
