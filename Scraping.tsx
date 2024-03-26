@@ -28,6 +28,8 @@ export default function ScrapeView() {
     fetchPrerequisites();
   }, [courseName]);
 
+  const noPrerequisitesFoundText = "No prerequisites found or course does not exist.";
+
   const fetchPrerequisites = () => {
     const course = courseData.find(c => c.identifier === courseName.toUpperCase());
     if (course && course.prerequisites) {
@@ -43,7 +45,7 @@ export default function ScrapeView() {
       }).join(' AND ');
       setPrerequisites(`${prereqs}`);
     } else {
-      setPrerequisites('No prerequisites found or course does not exist.');
+      setPrerequisites(noPrerequisitesFoundText);
     }
   };
 
@@ -59,6 +61,13 @@ export default function ScrapeView() {
     pushAllData()        
   }
 
+  const [searchCount, setSearchCount] = useState(0);
+  useEffect(() => {
+    if (prerequisites && prerequisites != noPrerequisitesFoundText) {
+      setSearchCount((count) => count + 1);
+    }
+  }, [prerequisites]);
+
   return (
     <NativeBaseProvider>
         <View style={styles.container}>
@@ -73,16 +82,19 @@ export default function ScrapeView() {
         {prerequisites ? (
             <>        
                 <Text style={styles.prerequisites}>Prerequisites: {prerequisites}</Text>
-                {prerequisites != "No prerequisites found or course does not exist." ? (
-                    <Tree course={courseName} prerequisites={prerequisites}/>
+                {prerequisites != noPrerequisitesFoundText ? (
+                    <>
+                        {setSearchCount}
+                        <Tree course={courseName} prerequisites={prerequisites}/>
+                    </>
                 ) : null}
             </>
         ) : null}
+        <Text>search count: {searchCount}</Text>
         <Box pt= "5"><Button onPress = {onButtonPressed}>Push result.json To Firebase</Button></Box>
         <StatusBar style="auto" />
         </View>
     </NativeBaseProvider>
-
 );
 }
 
