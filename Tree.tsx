@@ -133,6 +133,6 @@ export default function Tree(props: {course: string, prerequisites: string, setC
 const styles = StyleSheet.create({
   outer: {
     flex: 1,
-    height: 500,
+    height: 1000,
   }
 });
