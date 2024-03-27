@@ -91,11 +91,15 @@ export default function Tree(props: {course: string, prerequisites: string, setC
   let nodeBorderWidth = 3;
   let edgeWidth = 2;
 
+  let courseNodeColor = 'lightcyan';
+  let noPrerequisitesCourseNodeColor = 'lightblue';
+  let finalNodeColor = 'lightblue';
+
   if (!!!props.prerequisites) return (
     <ScrollView style={styles.outer}>
       <ScrollView horizontal style={styles.outer}>
         <Text>asdfasdfasdfasdfasdfasd</Text>
-        <Node text={"No prerequisites for " + props.course} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse}/>
+        <Node text={"No prerequisites for " + props.course.toUpperCase()} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse} courseNodeColor={noPrerequisitesCourseNodeColor}/>
       </ScrollView>
     </ScrollView>
   );
@@ -111,7 +115,7 @@ export default function Tree(props: {course: string, prerequisites: string, setC
       <ScrollView horizontal style={styles.outer}>
         <Text>nodes: {JSON.stringify(nodes)}</Text>
         <Text>edges: {JSON.stringify(edges)}</Text>
-        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} setCourse={props.setCourse}/>)}
+        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} setCourse={props.setCourse} courseNodeColor={courseNodeColor} finalNodeColor={finalNodeColor}/>)}
         <Svg style={{
           position: 'absolute',
           left: 0,
