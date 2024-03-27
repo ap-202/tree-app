@@ -1,85 +1,31 @@
 import { Text } from 'native-base';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import Node from './tree_components/Node'
 import Svg, { Line } from 'react-native-svg';
+import { GetNodesFromPrerequisites } from './simplify';
 
 /* Parse raw course prerequisites from the text to a 2D array of nodes,
    each row of the array corresponding to a row of nodes in the tree. */
-const ParseRawPrerequisites = (course: string, prerequisites: string): {id: number, text: string, parent: number}[][] => {
-  let prereqs: string[] = [];
-  let tempPrereqParsing = prerequisites.split(' ');
-  let i = 0;
-  while (i < tempPrereqParsing.length) {
-    if (tempPrereqParsing[i] == 'AND' || tempPrereqParsing[i] == 'OR') {
-      prereqs.push(tempPrereqParsing[i]);
+const ParseRawPrerequisites = (course: string|string[], prerequisites: string|string[]): {id: number, text: string, parent: number}[][] => {
+  if (!(typeof course === 'string' || course instanceof String)) {
+    prerequisites = '(' + course.join(') AND (') + ')';
+    let courses = '';
+    if (courses.length == 2) {
+      course = course[0].toUpperCase() + ' and ' + course[1].toUpperCase();
     } else {
-      let curr = tempPrereqParsing[i] + ' ' + tempPrereqParsing[i + 1];
-      i++;
-      for (let j = 0; j < (curr.match(/\(/g) || []).length; j++) {
-        prereqs.push('(');
-      }
-      prereqs.push(curr.replace(/[()]/g, ''));
-      for (let j = 0; j < (curr.match(/\)/g) || []).length; j++) {
-        prereqs.push(')');
-      }
-    }
-    i++;
-  }
-
-  let nodes: {id: number, text: string, parent: number}[][] = [[]];
-  let id = 1;
-  let openParenCount = 0;
-  let andOr: number[] = [];
-  let orphans: ({id: number, text: string, parent: number}|null)[] = [];
-  i = 0;
-  while (i < prereqs.length) {
-    let curr = prereqs[i];
-    if (curr == '(') {
-      openParenCount++;
-      while (nodes.length < openParenCount + 2) {
-        orphans.push(null);
-        nodes.push([]);
-        andOr.push(0);
-      };
-    } else if (curr == ')') {
-      andOr[openParenCount] = 0;
-      openParenCount--;
-    } else {
-      let node = {id: id, text: curr, parent: 0};
-      if (curr == 'AND' || curr == 'OR') {
-        if (!!!andOr[openParenCount]) {
-          if (andOr[openParenCount - 1]) {
-            node.parent = andOr[openParenCount - 1];
-          } else {
-            orphans[openParenCount - 1] = node;
-          }
-          nodes[openParenCount].push(node);
-          id++;
-          andOr[openParenCount] = node.id;
-          if (orphans[openParenCount]) {
-            orphans[openParenCount]!.parent = node.id;
-            orphans[openParenCount] = null;
-          }
+      for (let i = 0; i < course.length; i++) {
+        courses += course[i].toUpperCase();
+        if (i < course.length - 2) {
+          courses += ', ';
+        } else if (i == course.length - 2) {
+          courses += 'and ';
         }
-      } else {
-        if (andOr[openParenCount]) node.parent = andOr[openParenCount] ?? 0;
-        else orphans[openParenCount] = node;
-        while (nodes.length <= openParenCount + 1) nodes.push([]);
-        nodes[openParenCount + 1].push(node);
-        id++;
+        course = courses;
       }
     }
-    i++;
-  }
+  } else course = course.toUpperCase();
 
-  // (CS 2050 OR CS 2051 OR MATH 2106) AND (CS 1332 OR MATH 3012 OR MATH 3022)
-  /*
-  2050 2051 2106 1332 3012 3022     2
-        OR             OR           1
-                AND                 0
-  */
-  nodes.unshift([{id: 0, text: "to take " + course.toUpperCase(), parent: 0}]);
-  return nodes;
+  return GetNodesFromPrerequisites(course, prerequisites);
 }
 
 // Assuming the coordinates are the top left of the node

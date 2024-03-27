@@ -1,5 +1,5 @@
 function tokenize(input) {
-  let regex = /(\(|\)|\band\b|\bor\b)/g;
+  let regex = /(\(|\)|\bAND\b|\bOR\b)/g;
   let split_result = input
     .split(regex)
     .map((s) => s.trim())
@@ -20,7 +20,7 @@ function buildAST(tokens) {
       current = new_node;
     } else if (token === ")") {
       current = stack.pop();
-    } else if (token === "and" || token === "or") {
+    } else if (token === "AND" || token === "OR") {
       current.operator = token;
     } else {
       current.elements.push(token);
@@ -138,23 +138,47 @@ function simplifyAST(ast) {
 // Call this function with input text
 function simplifyInput(input) {
   let tokens = tokenize(input);
-  console.log("tokens");
-  console.log(tokens);
   let ast = buildAST(tokens);
-  console.log("ast");
-  console.log(JSON.stringify(ast, null, 2));
   let simplified_ast = simplifyAST(ast);
-  console.log("simplified ast");
-  console.log(JSON.stringify(simplified_ast, null, 2));
-
   return simplified_ast;
 }
 
-const input = "(A and (B or C)) and (A and B)";
+// Converts ast to tree visualizer 2D node list input format
+function astToNodes(course, ast) {
+  function insert(twoDimArr, level, item) {
+    while (twoDimArr.length < level + 1) {
+      twoDimArr.push([]);
+    }
+    twoDimArr[level].push(item);
+  }
+
+  function traverseAstLevel(ast, nodes, id, level, parentId) {
+    if (typeof ast === 'string' || ast instanceof String) {
+      insert(nodes, level, {id: id, text: ast, parent: parentId});
+      return id + 1;
+    }
+    let currId = id;
+    insert(nodes, level, {id: currId, text: ast.operator, parent: parentId})
+    id++;
+    for (let i = 0; i < ast.elements.length; i++) {
+      id = traverseAstLevel(ast.elements[i], nodes, id, level + 1, currId);
+    }
+    return id;
+  }
+
+  let nodes = [[{id: 0, text: "to take " + course, parent: 0}]];
+  traverseAstLevel(ast, nodes, 1, 1, 0);
+  return nodes;
+}
+
+export function GetNodesFromPrerequisites(course, prerequisites) {
+  return astToNodes(course, simplifyInput(prerequisites));
+}
+
+// const input = "(A and (B or C)) and (A and B)".toUpperCase();
 // const input = "(A and (B or C)) and (A and (B and B and (B or B)))";
 // const input = "A and (A or B)";
 // const input =
 //   "Undergraduate Semester level CS 1332 Minimum Grade of C and ((Undergraduate Semester level CS 1332 Minimum Grade of C and F and A and E) or C) and (D and E)";
 // const input =
 //   "Undergraduate Semester level CS 1332 Minimum Grade of C and (Undergraduate Semester level CS 2200 Minimum Grade of C or Undergraduate Semester level ECE 3057 Minimum Grade of C or Undergraduate Semester level ECE 3058 Minimum Grade of C) and Undergraduate Semester level CS 4400 Minimum Grade of C";
-let simplified_ast = simplifyInput(input);
