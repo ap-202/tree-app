@@ -99,26 +99,39 @@ export default function ScrapeView() {
   const noPrerequisitesFoundText = "No prerequisites found or course does not exist.";
 
   const fetchPrerequisites = () => {
-    if (courses.get(courseName.toUpperCase()) != null) { // Delete this after sprint 4 user interviews
-      setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
-      return; // Delete this after sprint 4 user interviews
-    } // Delete this after sprint 4 user interviews
-    const course = courseData.find(c => c.identifier === courseName.toUpperCase());
-    if (course && course.prerequisites) {
-      const prereqs = course.prerequisites.courses.map(pr => {
-        if (typeof pr === 'string') {
-          return pr;
-        } else if (pr.type === 'or') {
-          return '(' + pr.courses.join(' OR ') + ')';
-        } else if (pr.type === 'and') {
-          return '(' + pr.courses.join(' AND ') + ')';
+    let courseNameList = courseName.split(',');
+    let prerequisitesList = '';
+    for (let i = 0; i < courseNameList.length; i++) {
+      let currCourse = courseNameList[i].trim().toUpperCase();
+      courseNameList[i] = currCourse;
+      let currPrerequisites = '';
+      if (courses.get(currCourse) != null) { // Delete this after sprint 4 user interviews
+        currPrerequisites = courses.get(currCourse); // Delete this after sprint 4 user interviews
+      } else { // Delete this after sprint 4 user interviews
+        const course = courseData.find(c => c.identifier === currCourse);
+        if (course && course.prerequisites) {
+          const prereqs = course.prerequisites.courses.map(pr => {
+            if (typeof pr === 'string') {
+              return pr;
+            } else if (pr.type === 'or') {
+              return '(' + pr.courses.join(' OR ') + ')';
+            } else if (pr.type === 'and') {
+              return '(' + pr.courses.join(' AND ') + ')';
+            }
+            return '';
+          }).join(' AND ');
+          currPrerequisites=`${prereqs}`;
+        } else {
+          setPrerequisites(noPrerequisitesFoundText);
+          return;
         }
-        return '';
-      }).join(' AND ');
-      setPrerequisites(`${prereqs}`);
-    } else {
-      setPrerequisites(noPrerequisitesFoundText);
+        prerequisitesList += '(' + currPrerequisites + ')'
+        if (i < courseNameList.length - 1) {
+          prerequisitesList += ' AND ';
+        }
+      } // Delete this after sprint 4 user interviews
     }
+    setPrerequisites(prerequisitesList);
   };
 
   const pushAllData = async () => {

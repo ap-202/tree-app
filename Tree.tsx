@@ -6,24 +6,21 @@ import { GetNodesFromPrerequisites } from './simplify';
 
 /* Parse raw course prerequisites from the text to a 2D array of nodes,
    each row of the array corresponding to a row of nodes in the tree. */
-const ParseRawPrerequisites = (course: string|string[], prerequisites: string|string[]): {id: number, text: string, parent: number}[][] => {
-  if (!(typeof course === 'string' || course instanceof String)) {
-    prerequisites = '(' + course.join(') AND (') + ')';
-    let courses = '';
+const ParseRawPrerequisites = (course: string, prerequisites: string): {id: number, text: string, parent: number}[][] => {
+  course = course.toUpperCase();
+  if (course.includes(',')) {
+    let courses = course.split(',');
     if (courses.length == 2) {
-      course = course[0].toUpperCase() + ' and ' + course[1].toUpperCase();
+      course = courses[0].trim() + ' and ' + courses[1].trim();
     } else {
-      for (let i = 0; i < course.length; i++) {
-        courses += course[i].toUpperCase();
-        if (i < course.length - 2) {
-          courses += ', ';
-        } else if (i == course.length - 2) {
-          courses += 'and ';
-        }
-        course = courses;
+      let tempCourse = '';
+      for (let i = 0; i < courses.length; i++) {
+        tempCourse += courses[i].trim();
+        if (i < courses.length - 1) tempCourse += ', ';
+        if (i == courses.length - 2) tempCourse += 'and ';
       }
     }
-  } else course = course.toUpperCase();
+  }
 
   return GetNodesFromPrerequisites(course, prerequisites);
 }
