@@ -7,6 +7,7 @@ import { NativeBaseProvider, Box } from "native-base";
 import { Center } from 'native-base';
 import { VStack, Input, Button, Heading, Text, FormControl} from 'native-base'; 
 import SignUpView from './SignUp';
+import CourseSelection from './CourseSelection';
  
  /* 1st screen - Log In */
  const LogInView = ({navigation}) => {
@@ -41,6 +42,7 @@ import SignUpView from './SignUp';
                             <Text textAlign="center" fontSize={13}>Don't have an account? Click the button below to get started.</Text>
                             <Button onPress = {() => {navigation.navigate("Sign Up")}}>Sign Up</Button>
                             <Button onPress = {() => {navigation.navigate("Scrape")}}>DEV BUTTON</Button>
+                            <Button onPress = {() => {navigation.navigate("Course Selection")}}>Course Selection TEST</Button>
                         </VStack>
                     </Center>
                 </Center>
