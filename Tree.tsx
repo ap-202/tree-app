@@ -1,85 +1,28 @@
 import { Text } from 'native-base';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import Node from './tree_components/Node'
 import Svg, { Line } from 'react-native-svg';
+import { GetNodesFromPrerequisites } from './simplify';
 
 /* Parse raw course prerequisites from the text to a 2D array of nodes,
    each row of the array corresponding to a row of nodes in the tree. */
 const ParseRawPrerequisites = (course: string, prerequisites: string): {id: number, text: string, parent: number}[][] => {
-  let prereqs: string[] = [];
-  let tempPrereqParsing = prerequisites.split(' ');
-  let i = 0;
-  while (i < tempPrereqParsing.length) {
-    if (tempPrereqParsing[i] == 'AND' || tempPrereqParsing[i] == 'OR') {
-      prereqs.push(tempPrereqParsing[i]);
+  course = course.toUpperCase();
+  if (course.includes(',')) {
+    let courses = course.split(',');
+    if (courses.length == 2) {
+      course = courses[0].trim() + ' and ' + courses[1].trim();
     } else {
-      let curr = tempPrereqParsing[i] + ' ' + tempPrereqParsing[i + 1];
-      i++;
-      for (let j = 0; j < (curr.match(/\(/g) || []).length; j++) {
-        prereqs.push('(');
-      }
-      prereqs.push(curr.replace(/[()]/g, ''));
-      for (let j = 0; j < (curr.match(/\)/g) || []).length; j++) {
-        prereqs.push(')');
+      let tempCourse = '';
+      for (let i = 0; i < courses.length; i++) {
+        tempCourse += courses[i].trim();
+        if (i < courses.length - 1) tempCourse += ', ';
+        if (i == courses.length - 2) tempCourse += 'and ';
       }
     }
-    i++;
   }
 
-  let nodes: {id: number, text: string, parent: number}[][] = [[]];
-  let id = 1;
-  let openParenCount = 0;
-  let andOr: number[] = [];
-  let orphans: ({id: number, text: string, parent: number}|null)[] = [];
-  i = 0;
-  while (i < prereqs.length) {
-    let curr = prereqs[i];
-    if (curr == '(') {
-      openParenCount++;
-      while (nodes.length < openParenCount + 2) {
-        orphans.push(null);
-        nodes.push([]);
-        andOr.push(0);
-      };
-    } else if (curr == ')') {
-      andOr[openParenCount] = 0;
-      openParenCount--;
-    } else {
-      let node = {id: id, text: curr, parent: 0};
-      if (curr == 'AND' || curr == 'OR') {
-        if (!!!andOr[openParenCount]) {
-          if (andOr[openParenCount - 1]) {
-            node.parent = andOr[openParenCount - 1];
-          } else {
-            orphans[openParenCount - 1] = node;
-          }
-          nodes[openParenCount].push(node);
-          id++;
-          andOr[openParenCount] = node.id;
-          if (orphans[openParenCount]) {
-            orphans[openParenCount]!.parent = node.id;
-            orphans[openParenCount] = null;
-          }
-        }
-      } else {
-        if (andOr[openParenCount]) node.parent = andOr[openParenCount] ?? 0;
-        else orphans[openParenCount] = node;
-        while (nodes.length <= openParenCount + 1) nodes.push([]);
-        nodes[openParenCount + 1].push(node);
-        id++;
-      }
-    }
-    i++;
-  }
-
-  // (CS 2050 OR CS 2051 OR MATH 2106) AND (CS 1332 OR MATH 3012 OR MATH 3022)
-  /*
-  2050 2051 2106 1332 3012 3022     2
-        OR             OR           1
-                AND                 0
-  */
-  nodes.unshift([{id: 0, text: "to take " + course.toUpperCase(), parent: 0}]);
-  return nodes;
+  return GetNodesFromPrerequisites(course, prerequisites);
 }
 
 // Assuming the coordinates are the top left of the node
@@ -138,18 +81,24 @@ const CalculateNodeAndEdgePositions = (
 }
 
 export default function Tree(props: {course: string, prerequisites: string, setCourse: any}) {
+  if (!!!props.course) return (<></>);
   let nodeWidth = 90;
   let nodeHeight = 50;
   let verticalGapSize = 100;
   let minimumHorizontalGapSize = 25;
   let nodeBorderWidth = 3;
   let edgeWidth = 2;
+  let finalNodeExpansionMultiplier = 1;
+
+  let courseNodeColor = 'lightcyan';
+  let noPrerequisitesCourseNodeColor = 'lightblue';
+  let finalNodeColor = 'lightblue';
 
   if (!!!props.prerequisites) return (
     <ScrollView style={styles.outer}>
       <ScrollView horizontal style={styles.outer}>
         <Text>asdfasdfasdfasdfasdfasd</Text>
-        <Node text={"No prerequisites for " + props.course} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse}/>
+        <Node text={"No prerequisites for " + props.course.toUpperCase()} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse} courseNodeColor={noPrerequisitesCourseNodeColor} finalNodeExpansionMultiplier={finalNodeExpansionMultiplier}/>
       </ScrollView>
     </ScrollView>
   );
@@ -160,18 +109,21 @@ export default function Tree(props: {course: string, prerequisites: string, setC
   );
   let nodes = nodesAndEdges.nodes;
   let edges = nodesAndEdges.edges;
+
+  
+  console.log(JSON.stringify(nodes));
   return (
     <ScrollView style={styles.outer}>
       <ScrollView horizontal style={styles.outer}>
         <Text>nodes: {JSON.stringify(nodes)}</Text>
         <Text>edges: {JSON.stringify(edges)}</Text>
-        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} setCourse={props.setCourse}/>)}
+        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y - (finalNodeExpansionMultiplier - 1) * nodeHeight} setCourse={props.setCourse} courseNodeColor={courseNodeColor} finalNodeColor={finalNodeColor} finalNodeExpansionMultiplier={finalNodeExpansionMultiplier}/>)}
         <Svg style={{
           position: 'absolute',
           left: 0,
           top: 0,
         }}>
-          {edges.map((edge, index) => <Line key={index} x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} strokeWidth={edgeWidth} stroke="black"/>)}
+          {edges.map((edge, index) => <Line key={index} x1={edge.start.x} y1={edge.start.y - (finalNodeExpansionMultiplier - 1) * nodeHeight} x2={edge.end.x} y2={edge.end.y - (finalNodeExpansionMultiplier - 1) * nodeHeight} strokeWidth={edgeWidth} stroke="black"/>)}
         </Svg>
       </ScrollView>
     </ScrollView>
