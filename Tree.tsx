@@ -2,6 +2,7 @@ import { Text } from 'native-base';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import Node from './tree_components/Node'
 import Svg, { Line } from 'react-native-svg';
+import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
 
 /* Parse raw course prerequisites from the text to a 2D array of nodes,
    each row of the array corresponding to a row of nodes in the tree. */
@@ -137,7 +138,7 @@ const CalculateNodeAndEdgePositions = (
   return {nodes: newNodes, edges: edges};
 }
 
-export default function Tree(props: {course: string, prerequisites: string, setCourse: any}) {
+export default function Tree(this: any, props: {course: string, prerequisites: string, setCourse: any}) {
   let nodeWidth = 90;
   let nodeHeight = 50;
   let verticalGapSize = 100;
@@ -161,7 +162,19 @@ export default function Tree(props: {course: string, prerequisites: string, setC
   let nodes = nodesAndEdges.nodes;
   let edges = nodesAndEdges.edges;
   return (
-    <ScrollView style={styles.outer}>
+    <ReactNativeZoomableView
+      maxZoom={1.5}
+      minZoom={0.5}
+      zoomStep={0.5}
+      initialZoom={1}
+      bindToBorders={true}
+      onZoomAfter={this.logOutZoomState}
+      style={{
+          padding: 10,
+          backgroundColor: 'red',
+      }}
+    >
+      <ScrollView style={styles.outer}>
       <ScrollView horizontal style={styles.outer}>
         <Text>nodes: {JSON.stringify(nodes)}</Text>
         <Text>edges: {JSON.stringify(edges)}</Text>
@@ -175,6 +188,7 @@ export default function Tree(props: {course: string, prerequisites: string, setC
         </Svg>
       </ScrollView>
     </ScrollView>
+    </ReactNativeZoomableView>
   );
 }
 
