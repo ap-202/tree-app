@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import Node from './tree_components/Node'
 import Svg, { Line } from 'react-native-svg';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
@@ -193,10 +192,3 @@ export default function Tree(this: any, props: {course: string, prerequisites: s
     </ReactNativeZoomableView>
   );
 }
-
-const styles = StyleSheet.create({
-  outer: {
-    flex: 1,
-    height: 500,
-  }
-});
