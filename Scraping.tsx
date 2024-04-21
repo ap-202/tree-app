@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, TextInput } from "react-native";
 import { Box, Button, Text, NativeBaseProvider } from "native-base";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc } from "firebase/firestore";
 import Tree from "./Tree";
 
 // Delete this after sprint 4 user interviews
@@ -228,6 +228,15 @@ export default function ScrapeView() {
         });
     };
 
+    const logMetrics = async (data: any) => {
+        try {
+            console.log("TRYING LOGGED")
+            const coll = collection(firestore, "metrics")
+            const ref = await addDoc(coll, data)
+            console.log("LOGGED")
+        } catch(err) {console.log(err)}
+    };
+
     const onFirebaseButtonPressed = () => {
         pushAllData();
     };
@@ -239,6 +248,9 @@ export default function ScrapeView() {
             return metrics;
         });
         console.log("total courses searched: " + userMetrics.length);
+        let total_courses = userMetrics.length
+        let individual_courses: any = {}
+        let total_duration = 0
         let totalDuration = 0;
         console.log("courses: ");
         for (let i = 0; i < userMetrics.length; i++) {
@@ -250,10 +262,26 @@ export default function ScrapeView() {
                 (duration / 1000).toFixed(1) +
                 "s"
             );
+            let name_c = userMetrics[i].course.toUpperCase()
+            let dur_c = duration / 1000
+            individual_courses[name_c] = dur_c
             totalDuration += duration;
         }
+        total_duration = (totalDuration / 1000)
         console.log("total duration: " + (totalDuration / 1000).toFixed(1) + "s");
+        const date = new Date();
+        const log_data = {
+            date: date,
+            individual_courses: individual_courses,
+            total_courses_searched: total_courses,
+            total_duration: total_duration
+        }
+        logMetrics(log_data)
+        
     };
+
+
+
 
     const [userMetrics, setUserMetrics] = useState<
         { course: string; startTime: number; endTime: number }[]
