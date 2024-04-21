@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 
-export default function Node(props: {text: string, width: number, height: number, borderWidth: number, x: number, y: number, setCourse: any}) {
+export default function Node(props: {text: string, width: number, height: number, borderWidth: number, x: number, y: number, sizeMultiplier?: number, setCourse: any}) {
   const onNodeClickedGoToTree = () => {
     props.setCourse(props.text);
   }
@@ -23,8 +23,8 @@ export default function Node(props: {text: string, width: number, height: number
   if (props.text.startsWith("to take")) {
     return (
       <View style={{
-        width: props.width,
-        height: props.height,
+        width: props.width * (props.sizeMultiplier ?? 1),
+        height: props.height * (props.sizeMultiplier ?? 1),
         backgroundColor: 'lightcyan',
         borderWidth: props.borderWidth,
         position: 'absolute',
@@ -40,8 +40,8 @@ export default function Node(props: {text: string, width: number, height: number
   return (
     <TouchableOpacity
       style={{
-        width: props.width,
-        height: props.height,
+        width: props.width * (props.sizeMultiplier ?? 1),
+        height: props.height * (props.sizeMultiplier ?? 1),
         position: 'absolute',
         left: props.x,
         top: props.y,

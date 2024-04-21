@@ -92,7 +92,9 @@ const CalculateNodeAndEdgePositions = (
   minimumHorizontalGapSize: number
 ): {
   nodes: {text: string, x: number, y: number}[],
-  edges: {start: {x: number, y: number}, end: {x: number, y: number}}[]
+  edges: {start: {x: number, y: number}, end: {x: number, y: number}}[],
+  canvasWidth: number,
+  canvasHeight: number
 } => { 
   // Get the maximum width of a level of nodes.
   let canvasWidth = 0;
@@ -135,7 +137,7 @@ const CalculateNodeAndEdgePositions = (
     });
   }
 
-  return {nodes: newNodes, edges: edges};
+  return {nodes: newNodes, edges: edges, canvasWidth: canvasWidth, canvasHeight: canvasHeight};
 }
 
 export default function Tree(this: any, props: {course: string, prerequisites: string, setCourse: any}) {
@@ -145,22 +147,27 @@ export default function Tree(this: any, props: {course: string, prerequisites: s
   let minimumHorizontalGapSize = 25;
   let nodeBorderWidth = 3;
   let edgeWidth = 2;
+  let noPrerequisitesNodeSizeMultiplier = 2;
 
-  if (!!!props.prerequisites) return (
-    <ScrollView style={styles.outer}>
-      <ScrollView horizontal style={styles.outer}>
-        <Text>asdfasdfasdfasdfasdfasd</Text>
-        <Node text={"No prerequisites for " + props.course} width={nodeWidth * 1.75} height={nodeHeight * 1.5} borderWidth={nodeBorderWidth} x={0} y={0} setCourse={props.setCourse}/>
-      </ScrollView>
-    </ScrollView>
-  );
+  let nodes: {text: string, x: number, y: number, multiplier?: number}[] = [];
+  let edges: {start: {x: number, y: number}, end: {x: number, y: number}}[] = [];
+  let canvasWidth = 0;
+  let canvasHeight = 0;
+  if (!!!props.prerequisites) {
+    canvasWidth = nodeWidth * noPrerequisitesNodeSizeMultiplier;
+    canvasHeight = nodeHeight * noPrerequisitesNodeSizeMultiplier;
+    nodes.push({text: "No prerequisites to take " + props.course.toUpperCase(), x: 0, y: 0, multiplier: noPrerequisitesNodeSizeMultiplier});
+  } else {
+    let nodesAndEdges = CalculateNodeAndEdgePositions(
+      ParseRawPrerequisites(props.course, props.prerequisites),
+      nodeWidth, nodeHeight, verticalGapSize, minimumHorizontalGapSize
+    );
+    nodes = nodesAndEdges.nodes;
+    edges = nodesAndEdges.edges;
+    canvasWidth = nodesAndEdges.canvasWidth;
+    canvasHeight = nodesAndEdges.canvasHeight;
+  }
 
-  let nodesAndEdges = CalculateNodeAndEdgePositions(
-    ParseRawPrerequisites(props.course, props.prerequisites),
-    nodeWidth, nodeHeight, verticalGapSize, minimumHorizontalGapSize
-  );
-  let nodes = nodesAndEdges.nodes;
-  let edges = nodesAndEdges.edges;
   return (
     <ReactNativeZoomableView
       maxZoom={1.5}
@@ -171,14 +178,12 @@ export default function Tree(this: any, props: {course: string, prerequisites: s
       onZoomAfter={this.logOutZoomState}
       style={{
           padding: 10,
-          backgroundColor: 'red',
+          width: canvasWidth,
+          height: canvasHeight,
+          backgroundColor: 'red'
       }}
     >
-      <ScrollView style={styles.outer}>
-      <ScrollView horizontal style={styles.outer}>
-        <Text>nodes: {JSON.stringify(nodes)}</Text>
-        <Text>edges: {JSON.stringify(edges)}</Text>
-        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} setCourse={props.setCourse}/>)}
+        {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} sizeMultiplier={node.multiplier} setCourse={props.setCourse}/>)}
         <Svg style={{
           position: 'absolute',
           left: 0,
@@ -186,8 +191,6 @@ export default function Tree(this: any, props: {course: string, prerequisites: s
         }}>
           {edges.map((edge, index) => <Line key={index} x1={edge.start.x} y1={edge.start.y} x2={edge.end.x} y2={edge.end.y} strokeWidth={edgeWidth} stroke="black"/>)}
         </Svg>
-      </ScrollView>
-    </ScrollView>
     </ReactNativeZoomableView>
   );
 }
