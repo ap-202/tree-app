@@ -1,5 +1,4 @@
-import { Text } from 'native-base';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Node from './tree_components/Node'
 import Svg, { Line } from 'react-native-svg';
 import { ReactNativeZoomableView } from '@openspacelabs/react-native-zoomable-view';
