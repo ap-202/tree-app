@@ -1,13 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
 import { NativeBaseProvider } from "native-base";
-import { Center } from 'native-base';
-import {HStack, VStack, Input, Button, Heading, Text, FormControl, Radio} from 'native-base'; 
-import { WebView } from 'react-native-webview';
-import GraphView from './Graph';
+import {HStack, VStack, Input, Button } from 'native-base';
 
 /* 4th screen - Class Info Screen */
 const PreReqView = ({ navigation, route }) => {
@@ -15,7 +9,6 @@ const PreReqView = ({ navigation, route }) => {
     const [search, setSearch] = useState('')
 
     const submitSearch = () => {
-        console.log(search)
         setSearch("")
         navigation.navigate("Class Information", {classID: "CS1301"})
     }

@@ -1,11 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { StyleSheet, View } from 'react-native';
 import { NativeBaseProvider, Box } from "native-base";
 import { Center } from 'native-base';
-import { VStack, Input, Button, Heading, Text, FormControl} from 'native-base'; 
+import { VStack, Input, Button, Heading, FormControl} from 'native-base'; 
  
  /* 2nd screen - Sign Up */
  const SignUpView = ({navigation}) => {

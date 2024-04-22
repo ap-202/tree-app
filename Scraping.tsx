@@ -6,7 +6,7 @@ import { Box, Button, Text, NativeBaseProvider } from "native-base";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 import Tree from "./Tree";
-import { simplifyInput } from "./simplify";
+
 // Delete this after sprint 4 user interviews
 let courses = new Map();
 courses.set("PHYS 3122", "(PHYS 2212 OR PHYS 2232) AND (MATH 2403 OR MATH 2413 OR MATH 24X3)");
@@ -135,7 +135,6 @@ export default function ScrapeView() {
                 courseMap.set(identifier, "");
             }
         });
-        console.log(courseMap)
         return courseMap;
     };
 
@@ -144,7 +143,6 @@ export default function ScrapeView() {
     }, []);
     async function setCourses() {
         courses = await getPreReqs()
-        console.log(courses)
     }
     setCourses()
 
@@ -159,22 +157,14 @@ export default function ScrapeView() {
 
     const fetchPrerequisites = () => {
         let other = otherCourses.split(",");
-        // console.log(courses.get(courseName.toUpperCase()));
-        // console.log(other);
-        console.log(courses.get(courseName.toUpperCase()))
-        console.log(courses.get(other[0].toUpperCase()))
         if (
             courses.get(courseName.toUpperCase()) != null &&
             courses.get(other[0].toUpperCase()) != null
         ) {
-            console.log("HERE");
-            // console.log(courseName);
-            // console.log(other);
             let pr = courses.get(courseName.toUpperCase());
             let cns = other;
             cns.unshift(courseName);
             let str = "";
-            // console.log(pr);
             for (let i = 0; i < cns.length; i++) {
                 //str += "("+courses.get(cns[i].toUpperCase())+") AND "
                 if (courses.get(cns[i].toUpperCase()) != null) {
@@ -183,16 +173,12 @@ export default function ScrapeView() {
                             cns[i].toUpperCase(),
                             "(" + courses.get(cns[i].toUpperCase()) + ")"
                         );
-                        // console.log(courses.get(cns[i].toUpperCase()));
                     }
                 }
             }
             //str = str.substring(0, str.length - 5)
             setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
-            console.log(pr);
-            // console.log("______________-");
             setPrerequisites(pr);
-            // console.log(prerequisites);
             return;
         } else if (courses.get(courseName.toUpperCase()) != null) {
             // Delete this after sprint 4 user interviews
