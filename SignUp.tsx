@@ -19,8 +19,6 @@ import { VStack, Input, Button, Heading, FormControl} from 'native-base';
         navigation.navigate("Class Information")
     }
 
-    console.log("HERE")
-
     return(
         <View style={styles.container}>
             <NativeBaseProvider>

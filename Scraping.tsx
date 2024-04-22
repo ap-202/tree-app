@@ -79,6 +79,8 @@ export default function ScrapeView() {
     const [courseName, setCourseName] = useState("");
     const [prerequisites, setPrerequisites] = useState("");
     const [otherCourses, setOtherCourses] = useState("");
+    const [frozenCourseName, setFrozenCourseName] = useState("");
+    const [frozenPrerequisites, setFrozenPrerequisites] = useState("");
 
     const firebaseConfig = {
         apiKey: "AIzaSyB9_gnWKRWeYmND9tRzO7j3xK9Reg8-NpQ",
@@ -177,12 +179,14 @@ export default function ScrapeView() {
                 }
             }
             //str = str.substring(0, str.length - 5)
-            setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
+            //setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
             setPrerequisites(pr);
+            setFrozenCourseName(courseName);
             return;
         } else if (courses.get(courseName.toUpperCase()) != null) {
             // Delete this after sprint 4 user interviews
             setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
+            setFrozenCourseName(courseName);
             return; // Delete this after sprint 4 user interviews
         } // Delete this after sprint 4 user interviews
         const course = courseData.find(
@@ -202,8 +206,9 @@ export default function ScrapeView() {
                 })
                 .join(" AND ");
             setPrerequisites(`${prereqs}`);
+            setFrozenCourseName(courseName);
         } else {
-            setPrerequisites(noPrerequisitesFoundText);
+            // TODO: no prerequisites found
         }
     };
 
@@ -276,20 +281,20 @@ export default function ScrapeView() {
                     placeholder="other"
                 />
                 <Text style={styles.prereq_header}>Prerequisites Info</Text>
-                {prerequisites != null ? (
+                {!!frozenCourseName ? (
                     <>
                         <Text style={styles.prerequisites}>
                             Prerequisites: {prerequisites}
                         </Text>
-                        {prerequisites != noPrerequisitesFoundText ? (
-                            <Tree
-                                course={courseName}
+                        <Tree
+                                course={frozenCourseName}
                                 prerequisites={prerequisites}
                                 setCourse={setCourseName}
-                            />
-                        ) : null}
+                        />
                     </>
-                ) : null}
+                ) : (
+                    <Text style={styles.prerequisites}>{noPrerequisitesFoundText}</Text>
+                )}
                 <Text>search count: {userMetrics.length}</Text>
 
                 <Box pt="5">
