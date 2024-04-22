@@ -178,7 +178,7 @@ export default function Tree(this: any, props: {course: string, prerequisites: s
           padding: 10,
           width: canvasWidth,
           height: canvasHeight,
-          backgroundColor: 'red'
+          backgroundColor: 'lightgray'
       }}
     >
         {nodes.map((node, index) => <Node key={index} text={node.text} width={nodeWidth} height={nodeHeight} borderWidth={nodeBorderWidth} x={node.x} y={node.y} sizeMultiplier={node.multiplier} setCourse={props.setCourse}/>)}

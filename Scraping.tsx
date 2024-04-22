@@ -80,7 +80,7 @@ export default function ScrapeView() {
     const [prerequisites, setPrerequisites] = useState("");
     const [otherCourses, setOtherCourses] = useState("");
     const [frozenCourseName, setFrozenCourseName] = useState("");
-    const [frozenPrerequisites, setFrozenPrerequisites] = useState("");
+    const [courseStack, setCourseStack] = useState<string[]>([]);
 
     const firebaseConfig = {
         apiKey: "AIzaSyB9_gnWKRWeYmND9tRzO7j3xK9Reg8-NpQ",
@@ -226,6 +226,22 @@ export default function ScrapeView() {
         pushAllData();
     };
 
+    const onBack = () => {
+        console.log(courseStack)
+        if (courseStack.length == 1) {
+            setCourseName("");
+            setFrozenCourseName("");
+            setCourseStack([]);
+        }
+        else if (courseStack.length >= 2) {
+            setCourseName(courseStack[courseStack.length - 1]);
+            setCourseStack((stack) => {
+                stack.pop();
+                return stack;
+            })
+        }
+    }
+
     const onLogStatisticsButtonPressed = async () => {
         setUserMetrics((metrics) => {
             if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime)
@@ -247,6 +263,7 @@ export default function ScrapeView() {
             totalDuration += duration;
         }
         console.log("total duration: " + (totalDuration / 1000).toFixed(1) + "s");
+        console.log("courseStack: " + courseStack.toString());
     };
 
     const [userMetrics, setUserMetrics] = useState<
@@ -261,26 +278,33 @@ export default function ScrapeView() {
                 metrics.push({ course: courseName, startTime: Date.now(), endTime: 0 });
                 return metrics;
             });
+            setCourseStack((stack) => {
+                stack.push(courseName);
+                return stack;
+            });
         }
     }, [prerequisites]);
 
     return (
         <NativeBaseProvider>
             <View style={styles.container}>
-                <View>
-                    <Text>Enter Course Number:</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={setCourseName}
-                        value={courseName}
-                        placeholder="e.g. MATH 3012"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={setOtherCourses}
-                        value={otherCourses}
-                        placeholder="other"
-                    />
+                <View style={styles.button_box}>
+                    <Button onPress={onBack} style={styles.back_button}>back</Button>
+                    <View>
+                        <Text>Enter Course Number:</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setCourseName}
+                            value={courseName}
+                            placeholder="e.g. MATH 3012"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={setOtherCourses}
+                            value={otherCourses}
+                            placeholder="other"
+                        />
+                    </View>
                 </View>
                 {!!frozenCourseName ? (
                     <>
@@ -335,5 +359,10 @@ const styles = StyleSheet.create({
     button_box: {
         display: "flex",
         flexDirection: "row",
+    },
+    back_button: {
+        height: 60,
+        width: 60,
+        alignSelf: "center",
     }
 });

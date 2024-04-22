@@ -13,10 +13,6 @@ const PreReqView = ({ navigation, route }) => {
         navigation.navigate("Class Information", {classID: "CS1301"})
     }
 
-    useEffect(() => {
-        
-    }, []);
-
     return(
         <NativeBaseProvider>
             <VStack space = "2">
