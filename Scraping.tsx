@@ -263,7 +263,6 @@ export default function ScrapeView() {
             totalDuration += duration;
         }
         console.log("total duration: " + (totalDuration / 1000).toFixed(1) + "s");
-        console.log("courseStack: " + courseStack.toString());
     };
 
     const [userMetrics, setUserMetrics] = useState<
