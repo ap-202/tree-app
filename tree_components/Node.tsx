@@ -20,7 +20,7 @@ export default function Node(props: {text: string, width: number, height: number
       </View>
     )
   }
-  if (props.text.startsWith("to take")) {
+  if (props.text.includes("to take")) {
     return (
       <View style={{
         width: props.width * (props.sizeMultiplier ?? 1),

@@ -153,7 +153,7 @@ export default function ScrapeView() {
     }, [courseName, otherCourses]);
 
     const noPrerequisitesFoundText =
-        "No prerequisites found or course does not exist.";
+        "Enter course(s) to view prerequisites";
 
     //comment this function out and uncomment all of the courses.set lines to use the original map
 
@@ -207,9 +207,9 @@ export default function ScrapeView() {
                 .join(" AND ");
             setPrerequisites(`${prereqs}`);
             setFrozenCourseName(courseName);
-        } else {
-            // TODO: no prerequisites found
+            return;
         }
+        // If you're down here, no prerequisites have been found for the course(s).
     };
 
     const pushAllData = async () => {
@@ -267,20 +267,21 @@ export default function ScrapeView() {
     return (
         <NativeBaseProvider>
             <View style={styles.container}>
-                <Text>Enter Course Number:</Text>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setCourseName}
-                    value={courseName}
-                    placeholder="e.g. MATH 3012"
-                />
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setOtherCourses}
-                    value={otherCourses}
-                    placeholder="other"
-                />
-                <Text style={styles.prereq_header}>Prerequisites Info</Text>
+                <View>
+                    <Text>Enter Course Number:</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setCourseName}
+                        value={courseName}
+                        placeholder="e.g. MATH 3012"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setOtherCourses}
+                        value={otherCourses}
+                        placeholder="other"
+                    />
+                </View>
                 {!!frozenCourseName ? (
                     <>
                         <Text style={styles.prerequisites}>
@@ -295,14 +296,12 @@ export default function ScrapeView() {
                 ) : (
                     <Text style={styles.prerequisites}>{noPrerequisitesFoundText}</Text>
                 )}
-                <Text>search count: {userMetrics.length}</Text>
-
-                <Box pt="5">
+                <View style={styles.button_box}>
                     <Button onPress={onFirebaseButtonPressed}>
                         Push result.json To Firebase
                     </Button>
                     <Button onPress={onLogStatisticsButtonPressed}>Log statistics</Button>
-                </Box>
+                </View>
                 <StatusBar style="auto" />
             </View>
         </NativeBaseProvider>
@@ -314,14 +313,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#fff",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
     },
     input: {
         height: 40,
         margin: 12,
         borderWidth: 1,
         padding: 10,
-        width: "80%",
+        width: 250,
     },
     prereq_header: {
         marginTop: 20,
@@ -333,4 +332,8 @@ const styles = StyleSheet.create({
         marginTop: 20,
         textAlign: "center",
     },
+    button_box: {
+        display: "flex",
+        flexDirection: "row",
+    }
 });
