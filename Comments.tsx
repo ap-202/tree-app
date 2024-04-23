@@ -70,15 +70,30 @@ const CommentsView = ({navigation, route}) => {
 
     }
 
-    useEffect(() => {
-        let data = fetchComments(classID)
-        setComments(data)
-    }, [classID]);
+    // useEffect(() => {
+    //     let data = fetchComments(classID)
+    //     setComments(data)
+    // }, [classID]);
 
+    // useEffect(() => {
+    //     if (comments.length > 0) 
+    //         listRef.current?.scrollToEnd({ animated: true });
+    // }, [comments])
+
+    // For debugging
     useEffect(() => {
-        if (comments.length > 0) 
+        console.log("Comments loaded: ", comments);
+        let data = fetchComments(classID);
+        console.log("Data fetched for classID", classID, "is:", data);
+        setComments(data);
+    }, [classID]);
+    
+    useEffect(() => {
+        if (comments) {
+            console.log("Current comments length: ", comments.length);
             listRef.current?.scrollToEnd({ animated: true });
-    }, [comments])
+        }
+    }, [comments]);
 
 
     return(
@@ -118,4 +133,4 @@ const styles = StyleSheet.create({
     }
   });
 
-export default CommentsView
+export default CommentsView;

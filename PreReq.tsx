@@ -1,7 +1,13 @@
+import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NativeBaseProvider } from "native-base";
-import {HStack, VStack, Input, Button } from 'native-base';
+import { Center } from 'native-base';
+import {HStack, VStack, Input, Button, Heading, Text, FormControl, Radio} from 'native-base'; 
+import { WebView } from 'react-native-webview';
+import GraphView from './Graph';
 
 /* 4th screen - Class Info Screen */
 const PreReqView = ({ navigation, route }) => {
@@ -9,15 +15,16 @@ const PreReqView = ({ navigation, route }) => {
     const [search, setSearch] = useState('')
 
     const submitSearch = () => {
-        setSearch("")
-        navigation.navigate("Class Information", {classID: "CS1301"})
-    }
+        console.log("Search submitted for:", search); // Log the user input to confirm it's captured correctly
+        navigation.navigate("Class Information", { classID: search.trim() }); // Navigate using the user's input
+        setSearch(""); // Optionally reset the search input after submission
+    };
 
     return(
         <NativeBaseProvider>
             <VStack space = "2">
                 <HStack  pb = "30" pl = "5" pr = "5" space={1} alignItems="center" justifyContent="center" mt={5}>
-                    <Input mx="" placeholder="Enter a class ID (e.g. CS 1301)" w="80%" h="10" value = {search} onChangeText={setSearch}/>
+                    <Input mx="" placeholder="Enter a class ID (e.g. CS 1301)" w="80%" h="10" value = {search} onChangeText={setSearch} onSubmitEditing={submitSearch}/>
                     <Button flex = {1} onPress = {submitSearch}>Send</Button>
                 </HStack>
             </VStack>
@@ -43,4 +50,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PreReqView
+export default PreReqView;
