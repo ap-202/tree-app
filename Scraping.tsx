@@ -82,6 +82,24 @@ export default function ScrapeView() {
     const [frozenCourseName, setFrozenCourseName] = useState("");
     const [courseStack, setCourseStack] = useState<string[]>([]);
 
+    useEffect(() => {
+        if (prerequisites && prerequisites != noPrerequisitesFoundText) {
+            setUserMetrics((metrics) => {
+                if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime)
+                    metrics[metrics.length - 1].endTime = Date.now();
+                metrics.push({ course: courseName.trim().toUpperCase(), startTime: Date.now(), endTime: 0 });
+                return metrics;
+            });
+            setCourseStack((stack) => {
+                if (courseName.trim().toUpperCase() != stack[stack.length - 1]) {
+                    stack.push(courseName.trim().toUpperCase());
+                }
+                console.log(stack);
+                return stack;
+            });
+        }
+    }, [frozenCourseName]);
+
     const firebaseConfig = {
         apiKey: "AIzaSyB9_gnWKRWeYmND9tRzO7j3xK9Reg8-NpQ",
         authDomain: "tree-app-1f060.firebaseapp.com",
@@ -158,10 +176,11 @@ export default function ScrapeView() {
     //comment this function out and uncomment all of the courses.set lines to use the original map
 
     const fetchPrerequisites = () => {
+        console.log("fetchPrerequisites");
         let other = otherCourses.split(",");
         if (
-            courses.get(courseName.toUpperCase()) != null &&
-            courses.get(other[0].toUpperCase()) != null
+            courses.get(courseName.trim().toUpperCase()) != null &&
+            courses.get(other[0].trim().toUpperCase()) != null
         ) {
             let pr = courses.get(courseName.toUpperCase());
             let cns = other;
@@ -181,12 +200,12 @@ export default function ScrapeView() {
             //str = str.substring(0, str.length - 5)
             //setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
             setPrerequisites(pr);
-            setFrozenCourseName(courseName);
+            setFrozenCourseName(courseName.trim().toUpperCase());
             return;
         } else if (courses.get(courseName.toUpperCase()) != null) {
             // Delete this after sprint 4 user interviews
             setPrerequisites(courses.get(courseName.toUpperCase())); // Delete this after sprint 4 user interviews
-            setFrozenCourseName(courseName);
+            setFrozenCourseName(courseName.trim().toUpperCase());
             return; // Delete this after sprint 4 user interviews
         } // Delete this after sprint 4 user interviews
         const course = courseData.find(
@@ -206,7 +225,7 @@ export default function ScrapeView() {
                 })
                 .join(" AND ");
             setPrerequisites(`${prereqs}`);
-            setFrozenCourseName(courseName);
+            setFrozenCourseName(courseName.trim().toUpperCase());
             return;
         }
         // If you're down here, no prerequisites have been found for the course(s).
@@ -228,17 +247,18 @@ export default function ScrapeView() {
 
     const onBack = () => {
         console.log(courseStack)
-        if (courseStack.length == 1) {
+        if (courseStack.length <= 1) {
             setCourseName("");
             setFrozenCourseName("");
             setCourseStack([]);
         }
         else if (courseStack.length >= 2) {
-            setCourseName(courseStack[courseStack.length - 1]);
             setCourseStack((stack) => {
                 stack.pop();
                 return stack;
-            })
+            });
+            setCourseName(courseStack[courseStack.length - 1]);
+            setFrozenCourseName(courseStack[courseStack.length - 1]);
         }
     }
 
@@ -253,13 +273,15 @@ export default function ScrapeView() {
         console.log("courses: ");
         for (let i = 0; i < userMetrics.length; i++) {
             let duration = userMetrics[i].endTime - userMetrics[i].startTime;
-            console.log(
-                "    course: " +
-                userMetrics[i].course.toUpperCase() +
-                ", duration: " +
-                (duration / 1000).toFixed(1) +
-                "s"
-            );
+            if (duration) {
+                console.log(
+                    "    course: " +
+                    userMetrics[i].course.toUpperCase() +
+                    ", duration: " +
+                    (duration / 1000).toFixed(1) +
+                    "s"
+                );
+            }
             totalDuration += duration;
         }
         console.log("total duration: " + (totalDuration / 1000).toFixed(1) + "s");
@@ -274,11 +296,14 @@ export default function ScrapeView() {
             setUserMetrics((metrics) => {
                 if (metrics.length > 0 && !!!metrics[metrics.length - 1].endTime)
                     metrics[metrics.length - 1].endTime = Date.now();
-                metrics.push({ course: courseName, startTime: Date.now(), endTime: 0 });
+                metrics.push({ course: courseName.trim().toUpperCase(), startTime: Date.now(), endTime: 0 });
                 return metrics;
             });
             setCourseStack((stack) => {
-                stack.push(courseName);
+                if (courseName.trim().toUpperCase() != stack[stack.length - 1]) {
+                    stack.push(courseName.trim().toUpperCase());
+                }
+                console.log(stack);
                 return stack;
             });
         }
