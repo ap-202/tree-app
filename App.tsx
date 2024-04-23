@@ -21,7 +21,8 @@ const App = () => {
     const Stack = createNativeStackNavigator();
 
     return (
-        <NavigationContainer>  
+        <NativeBaseProvider>
+          <NavigationContainer>  
             <Stack.Navigator>
                 <Stack.Screen name = "Log In" component = {LogInView} />
                 <Stack.Screen name = "Sign Up" component = {SignUpView} />
@@ -31,7 +32,8 @@ const App = () => {
                 <Stack.Screen name = "Comments" component = {CommentsView} />
                 <Stack.Screen name = "Scrape" component = {ScrapeView} />
             </Stack.Navigator>
-        </NavigationContainer>  
+          </NavigationContainer> 
+        </NativeBaseProvider> 
         );
 }
 
