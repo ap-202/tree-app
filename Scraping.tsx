@@ -268,12 +268,13 @@ export default function ScrapeView() {
                 metrics[metrics.length - 1].endTime = Date.now();
             return metrics;
         });
-        console.log("total courses searched: " + userMetrics.length);
+        setUserMetrics(userMetrics.filter((metric) => (metric.endTime - metric.startTime) / 1000 >= 0.1));
+        console.log("total courses searched: " + userMetrics);
         let totalDuration = 0;
         console.log("courses: ");
         for (let i = 0; i < userMetrics.length; i++) {
             let duration = userMetrics[i].endTime - userMetrics[i].startTime;
-            if (duration) {
+            if (duration >= 0.1) {
                 console.log(
                     "    course: " +
                     userMetrics[i].course.toUpperCase() +
