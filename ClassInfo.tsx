@@ -82,7 +82,7 @@ const firestore = getFirestore(app)
           <Text style={styles.boldText}>Instructors:</Text>
             {courseData.sections?.map((section, index) => (
             <Text key={index} style={{ paddingLeft: 10 }}>
-              Section {section.section_id}: {section.instructors?.map(instructor => instructor.replace(/\s+/g, ' ').trim()).join(', ') || 'No Instructors Listed'}
+              Section {section.section_id} - {section.instructors?.map(instructor => instructor.replace(/\s+/g, ' ').trim()).join(', ') || 'No Instructors Listed'}
             </Text>
             ))}
         </VStack>
